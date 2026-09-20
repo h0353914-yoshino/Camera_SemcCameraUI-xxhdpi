@@ -4,7 +4,9 @@ plugins {
 }
 
 android {
-    compileSdkVersion(28)
+    // 30 是目前上限：android-34/35 的 android.jar 含 MODULE attribute，
+    // 會讓固定使用的 JDK 8 javac 直接拋 AssertionError。
+    compileSdkVersion(30)
 
     defaultConfig {
         applicationId = "com.sonyericsson.android.camera"

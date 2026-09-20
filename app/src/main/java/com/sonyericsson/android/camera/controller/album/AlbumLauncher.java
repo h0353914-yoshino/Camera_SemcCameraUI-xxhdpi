@@ -59,6 +59,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.MediaStore;
 import com.sonyericsson.android.camera.util.CamLog;
 import com.sonyericsson.cameracommon.contentsview.PredictiveCaptureStoreInfo;
 import com.sonyericsson.cameracommon.mediasaving.MediaSavingConstants;
@@ -134,7 +135,7 @@ public final class AlbumLauncher {
         if (CommonUtility.isActivityAvailable(activity.getApplicationContext(), intent)) {
             activity.startActivityForResult(intent, 8);
         } else {
-            launchReviewApp(activity, uri, str, 8);
+            launchReviewApp(activity, uri, str, 8, false);
         }
         ResearchUtil.getInstance().setViewerLaunched();
     }
@@ -173,16 +174,30 @@ public final class AlbumLauncher {
         if (CommonUtility.isActivityAvailable(activity.getApplicationContext(), intent)) {
             activity.startActivityForResult(intent, 9);
         } else {
-            launchReviewApp(activity, list.get(0), list2.get(0), 9);
+            launchReviewApp(activity, list.get(0), list2.get(0), 9, true);
         }
         ResearchUtil.getInstance().setViewerLaunched();
     }
 
-    private static void launchReviewApp(Activity activity, Uri uri, String str, int i) {
-        Intent intent = new Intent("android.intent.action.VIEW");
+    private static void launchReviewApp(Activity activity, Uri uri, String str, int i, boolean z) {
+        // Android 10（API 29）之後 AOSP / LineageOS 圖庫只註冊 MediaStore.ACTION_REVIEW，
+        // 不再接受舊的 "com.android.camera.action.REVIEW"。若直接退回 ACTION_VIEW，圖庫會
+        // 把內容當成外部唯讀項目，只剩「分享」而沒有刪除／編輯／我的最愛，所以先試
+        // ACTION_REVIEW(_SECURE)，真的沒人接才退回 ACTION_VIEW。
+        Intent intent = new Intent(z ? MediaStore.ACTION_REVIEW_SECURE : MediaStore.ACTION_REVIEW);
         intent.setDataAndType(uri, str);
         try {
             activity.startActivityForResult(intent, i);
+            return;
+        } catch (ActivityNotFoundException unused) {
+            if (CamLog.DEBUG) {
+                CamLog.d("There is no activity which accepts action:" + intent.getAction());
+            }
+        }
+        Intent intent2 = new Intent("android.intent.action.VIEW");
+        intent2.setDataAndType(uri, str);
+        try {
+            activity.startActivityForResult(intent2, i);
         } catch (ActivityNotFoundException unused) {
             if (CamLog.DEBUG) {
                 CamLog.d("There is no activity which accepts action:Intent.ACTION_VIEW");

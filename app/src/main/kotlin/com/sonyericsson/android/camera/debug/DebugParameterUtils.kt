@@ -34,7 +34,7 @@ object DebugParameterUtils {
     const val SHARED_PREFERENCES_CAMERA_DEBUG = "com.sonyericsson.android.camera.shared_preferences_debug"
 
     val isUserBuild by lazy {
-        Build.TYPE.toLowerCase(Locale.ENGLISH) == "user"
+        Build.TYPE.lowercase(Locale.ENGLISH) == "user"
     }
 
 

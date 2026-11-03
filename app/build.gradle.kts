@@ -58,9 +58,7 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs("src/main/java", "src/main/kotlin")
-            // 將原始 APK 中的非程式碼檔案打包（org/apache/.../rgb.txt 等資料檔案）
-            resources.srcDir("src/main")
-            resources.include("org/**")
+            // 將原始 APK 中的非程式碼檔案打包（org/apache/.../rgb.txt 等資料檔案，位於 src/main/resources）
             jniLibs.srcDirs("src/main/jniLibs")
         }
     }
@@ -101,9 +99,9 @@ dependencies {
     compileOnly("com.android.support:design:28.0.0")
 
     // ── 執行時依賴（打包進 APK）─────────────────
-    // Kotlin stdlib（與原始 APK 對齊 1.2.60）
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.2.60")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.60")
+    // Kotlin stdlib（與 kotlin-gradle-plugin 對齊 2.0.21）
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21")
 
     // Support Library 28
     implementation("com.android.support:appcompat-v7:28.0.0")

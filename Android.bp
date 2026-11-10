@@ -263,8 +263,10 @@ android_app {
     ],
 
     platform_apis: true,
+    sdk_version: "current",
     certificate: "platform",
     privileged: true,
+    vendor: true,
 
     jni_libs: [
         "libarcsoft_handsigns_semccamera",
